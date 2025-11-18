@@ -223,3 +223,5 @@ This project is licensed under the MIT License. See the LICENSE file for details
 ## Contact
 
 Project Repository: https://github.com/YOUR_USERNAME/Vocab-Coach
+
+--Author: Naim Hossain
