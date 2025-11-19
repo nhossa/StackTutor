@@ -3,7 +3,7 @@ Tech Vocab AI Coach - FastAPI Application
 Cloud-native microservice for learning technical concepts
 """
 from fastapi import FastAPI
-from app.routers import terms
+from app.routers import terms, quiz, vocabulary
 
 # Create FastAPI application instance
 app = FastAPI(
@@ -12,8 +12,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Register routers
-app.include_router(terms.router)
+# Register routers with common prefix
+app.include_router(terms.router, prefix="/api/v1")
+app.include_router(quiz.router, prefix="/api/v1")
+app.include_router(vocabulary.router, prefix="/api/v1")
 
 
 @app.get("/")

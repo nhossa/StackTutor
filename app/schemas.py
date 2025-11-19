@@ -56,6 +56,7 @@ class QuizQuestion(BaseModel):
     """Random quiz question - output"""
     term_id: int
     term: str
+    category: str
 
 
 class QuizAnswerRequest(BaseModel):
@@ -66,9 +67,11 @@ class QuizAnswerRequest(BaseModel):
 
 class QuizResult(BaseModel):
     """Quiz result with AI feedback - output"""
+    term: str
     score: int = Field(ge=0, le=100)  # Between 0-100
     feedback: str
     correct_answer: str
+    your_answer: str
     saved_to_vocabulary: bool
 
 

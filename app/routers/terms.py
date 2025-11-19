@@ -11,11 +11,11 @@ from zoneinfo import ZoneInfo
 
 # Create router instance
 router = APIRouter(
-    prefix="/api/v1/terms",
+    prefix="/terms",
     tags=["terms"]
 )
 
-
+#output validation through TermResponse
 @router.post("/", response_model=TermResponse)
 async def explain_term(
     request: TermRequest,
