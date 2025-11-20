@@ -24,8 +24,10 @@ async def get_vocabulary(
     """
     Get all saved vocabulary items for user
     """
-    # Get all vocabulary items with their associated terms
-    vocab_items = db.query(VocabularyItem).join(Term).all()
+    # Get vocabulary items for current user only
+    vocab_items = db.query(VocabularyItem).join(Term).filter(
+        VocabularyItem.user_id == current_user.id
+    ).all()
     
     # Build response with term details
     items = []
@@ -46,7 +48,11 @@ async def get_vocabulary(
 
 
 @router.post("/{term_id}")
-async def save_term_to_vocabulary(term_id: int, db: Session = Depends(get_db)):
+async def save_term_to_vocabulary(
+    term_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
     Save a term to user's vocabulary
     """
@@ -61,7 +67,7 @@ async def save_term_to_vocabulary(term_id: int, db: Session = Depends(get_db)):
     
     # Create vocabulary item
     vocab_item = VocabularyItem(
-        user_id=None,  # Will add after authentication
+        user_id=current_user.id,
         term_id=term_id
     )
     

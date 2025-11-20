@@ -13,10 +13,11 @@ from app.models import User
 # Example request header:
 # Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 # HTTPBearer() automatically extracts the token part after "Bearer ".
+#__init__
 security = HTTPBearer()
 
-
 def get_current_user(
+        #__call__
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ) -> User:

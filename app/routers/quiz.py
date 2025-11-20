@@ -9,7 +9,8 @@ from zoneinfo import ZoneInfo
 
 from app.schemas import QuizQuestion, QuizAnswerRequest, QuizResult
 from app.database import get_db
-from app.models import Term, QuizAttempt
+from app.models import Term, QuizAttempt, User
+from app.auth.auth_bearer import get_current_user
 
 # Create router instance
 router = APIRouter(
@@ -19,7 +20,10 @@ router = APIRouter(
 
 
 @router.get("/random", response_model=QuizQuestion)
-async def get_random_quiz(db: Session = Depends(get_db)):
+async def get_random_quiz(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
     Get a random term to quiz on
     """
@@ -40,7 +44,11 @@ async def get_random_quiz(db: Session = Depends(get_db)):
 
 
 @router.post("/answer", response_model=QuizResult)
-async def submit_answer(answer: QuizAnswerRequest, db: Session = Depends(get_db)):
+async def submit_answer(
+    answer: QuizAnswerRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
     Submit quiz answer and get AI grading
     """
@@ -60,7 +68,7 @@ async def submit_answer(answer: QuizAnswerRequest, db: Session = Depends(get_db)
     
     # Save quiz attempt to database
     quiz_attempt = QuizAttempt(
-        user_id=None,  # Will add after authentication
+        user_id=current_user.id,
         term_id=answer.term_id,
         user_answer=answer.user_answer,
         score=score,
