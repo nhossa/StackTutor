@@ -12,6 +12,7 @@ from app.database import get_db
 from app.models import Term, QuizAttempt, User
 from app.auth.auth_bearer import get_current_user
 from app.services.ai_grader import grade_user_answer
+from typing import Optional
 
 
 # Create router instance
@@ -21,27 +22,33 @@ router = APIRouter(
 )
 
 
+
 @router.get("/random", response_model=QuizQuestion)
 async def get_random_quiz(
+    category: Optional[str] = None,
+    difficulty: Optional[int] = None,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Get a random term to quiz on
+    Get a random term to quiz on, optionally filtered by category and difficulty
     """
-    # Get random term from database using SQLite's random()
-    random_term = db.query(Term).order_by(func.random()).first()
-    
+    query = db.query(Term)
+    if category:
+        query = query.filter(Term.category == category)
+    if difficulty:
+        query = query.filter(Term.difficulty == difficulty)
+    random_term = query.order_by(func.random()).first()
     if not random_term:
         raise HTTPException(
             status_code=404,
-            detail="No terms available in database. Please add terms first."
+            detail="No terms available in database for the given filters."
         )
-    
     return QuizQuestion(
         term_id=random_term.id,
         term=f"Explain {random_term.term}",
-        category=random_term.category
+        category=random_term.category,
+        difficulty=random_term.difficulty
     )
 
 

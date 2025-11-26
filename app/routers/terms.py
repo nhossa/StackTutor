@@ -34,11 +34,14 @@ async def explain_term(
         )
     
     return TermResponse(
-    term=term.term,
-    formal_definition=term.formal_definition,
-    simple_definition=term.simple_definition,
-    examples=[term.example] if term.example else [],
-    why_it_matters=term.why_it_matters or "No information available",
-    category=term.category,
-    timestamp=datetime.now(ZoneInfo("UTC"))
-)
+        id=term.id,
+        term=term.term,
+        formal_definition=term.formal_definition,
+        simple_definition=term.simple_definition,
+        example=term.example,
+        why_it_matters=term.why_it_matters,
+        category=term.category,
+        category_id=term.category_id,
+        difficulty=term.difficulty,
+        created_at=term.created_at,
+    )

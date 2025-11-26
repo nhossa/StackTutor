@@ -1,42 +1,36 @@
 """
-Add sample terms to database
+Seed all terms from app.data.terms.ALL_TERMS into the database.
+Simple, explicit version.
 """
 
+from sqlalchemy import text
 from app.database import SessionLocal
 from app.models import Term
-from terms_data_200 import terms_data_200
+from app.data.terms import ALL_TERMS
+
 
 def seed_terms():
-    """Add sample terms to database"""
     db = SessionLocal()
-    terms_data = terms_data_200
-    
-    added_count = 0
-    skipped_count = 0
-    
-    seen_terms = set()
-    for term_data in terms_data:
-        term_lower = term_data["term"].strip().lower()
-        if term_lower in seen_terms:
-            print(f"  Skipped '{term_data['term']}' - duplicate in input list")
-            skipped_count += 1
-            continue
-        seen_terms.add(term_lower)
-        # Check if term already exists (case-insensitive)
-        existing = db.query(Term).filter(Term.term.ilike(term_data["term"])).first()
-        if existing:
-            print(f"  Skipped '{term_data['term']}' - already exists in DB")
-            skipped_count += 1
-        else:
-            new_term = Term(**term_data)
-            db.add(new_term)
-            added_count += 1
-            print(f"Added '{term_data['term']}'")
-    
+
+    db.execute(text("TRUNCATE TABLE terms RESTART IDENTITY CASCADE;"))
     db.commit()
-    print(f"\n Summary: Added {added_count}, Skipped {skipped_count}")
+    print("Force-emptied terms table.")
+
+    unique_terms = {}
+    dup_count = 0
+    for term in ALL_TERMS:
+        key = term["term"].strip().lower()
+        if key in unique_terms:
+            dup_count += 1
+            continue
+        unique_terms[key] = term
+
+    for term in unique_terms.values():
+        db.add(Term(**term))
+
+    db.commit()
     db.close()
-
-
+    print(f"Inserted {len(unique_terms)} new terms. Skipped {dup_count} duplicates.")
+    
 if __name__ == "__main__":
     seed_terms()

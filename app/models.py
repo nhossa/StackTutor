@@ -28,12 +28,28 @@ class Term(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     term = Column(String, unique=True, nullable=False, index=True)
-    category = Column(String, nullable=False, index=True)  # devops, networking, security, swe, system_design
+
+    # NEW FIELD – foreign key to categories table
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
+
+    # keep these for now, we will delete later
+    category = Column(String, nullable=False, index=True)
+
     formal_definition = Column(String, nullable=False)
     example = Column(String, nullable=True)
     simple_definition = Column(String, nullable=False)
     why_it_matters = Column(String, nullable=True)  
+    difficulty = Column(Integer, nullable=False, default=1)  
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class Category(Base):
+    __tablename__ = "categories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False, index=True)  # "networking", "devops", etc.
+    description = Column(String, nullable=True)
+
+    # we'll wire up relationships later
 
 class QuizAttempt(Base):
     __tablename__ = "quiz_attempts"

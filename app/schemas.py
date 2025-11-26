@@ -39,13 +39,16 @@ class TermRequest(BaseModel):
 
 class TermResponse(BaseModel):
     """Response with term explanation"""
+    id: int
     term: str
     formal_definition: str
     simple_definition: str
-    examples: List[str]
-    why_it_matters: str
+    example: Optional[str] = None
+    why_it_matters: Optional[str] = None
     category: str
-    timestamp: datetime
+    category_id: Optional[int] = None
+    difficulty: int
+    created_at: datetime
 
 
 # ============================================
@@ -57,6 +60,7 @@ class QuizQuestion(BaseModel):
     term_id: int
     term: str
     category: str
+    difficulty: int
 
 
 class QuizAnswerRequest(BaseModel):
@@ -84,9 +88,18 @@ class VocabularyItemResponse(BaseModel):
     id: int
     term: str
     category: str
+    category_id: Optional[int] = None
     saved_at: datetime
     review_count: int
     last_score: Optional[int]
+# ============================================
+# CATEGORY SCHEMAS
+# ============================================
+
+class CategoryResponse(BaseModel):
+    id: int
+    name: str
+    description: Optional[str] = None
 
 
 class VocabularyListResponse(BaseModel):
