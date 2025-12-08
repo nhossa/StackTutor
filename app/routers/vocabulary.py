@@ -35,7 +35,13 @@ async def get_vocabulary(
         items.append(VocabularyItemResponse(
             id=item.id,
             term=item.term.term,
+            formal_definition=item.term.formal_definition,
+            simple_definition=item.term.simple_definition,
+            example=item.term.example,
+            why_it_matters=item.term.why_it_matters,
             category=item.term.category,
+            category_id=item.term.category_id,
+            difficulty=item.term.difficulty,
             saved_at=item.saved_at,
             review_count=item.review_count,
             last_score=item.last_score

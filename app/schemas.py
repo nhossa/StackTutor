@@ -87,8 +87,13 @@ class VocabularyItemResponse(BaseModel):
     """Single vocabulary item - output"""
     id: int
     term: str
+    formal_definition: str
+    simple_definition: str
+    example: Optional[str] = None
+    why_it_matters: Optional[str] = None
     category: str
     category_id: Optional[int] = None
+    difficulty: int
     saved_at: datetime
     review_count: int
     last_score: Optional[int]
