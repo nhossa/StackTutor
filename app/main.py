@@ -5,6 +5,7 @@ Cloud-native microservice for learning technical concepts
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.database import Base, engine
 from app.routers import terms, quiz, vocabulary, auth
 from seed import seed_terms
@@ -28,6 +29,15 @@ app = FastAPI(
     description="Learn DevOps, Cloud, Backend, Networking, System Design, and Security",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+# Add CORS middleware to allow frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, replace with your frontend domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Register routers with common prefix

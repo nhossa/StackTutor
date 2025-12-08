@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StackTutor - Login</title>
+    <!-- Bootstrap CSS - makes our page look nice without writing much CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Our custom black and blue theme -->
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h2 class="text-center mb-4"> StackTutor </h2>
+                        <h5 class="text-center text-muted mb-4">Login</h5>
+                        
+                        <!-- This is where error/success messages will appear -->
+                        <div id="message"></div>
+                        
+                        <!-- Login Form -->
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input 
+                                    type="email" 
+                                    class="form-control" 
+                                    id="email" 
+                                    placeholder="your@email.com"
+                                    required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input 
+                                    type="password" 
+                                    class="form-control" 
+                                    id="password" 
+                                    placeholder="Enter password"
+                                    required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100">
+                                Login
+                            </button>
+                        </form>
+                        
+                        <hr class="my-4">
+                        
+                        <p class="text-center mb-0">
+                            Don't have an account? 
+                            <a href="register.html">Register here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Our custom JavaScript - we'll create this next -->
+    <script>
+        // STEP 1: Listen for form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            // Prevent the form from refreshing the page
+            event.preventDefault();
+            
+            // STEP 2: Get the values the user typed
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // STEP 3: Show a loading message
+            showMessage('Logging in...', 'info');
+            
+            // STEP 4: Send data to your backend API
+            try {
+                const response = await fetch('http://localhost:8001/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // STEP 5: Check if login was successful
+                if (response.ok) {
+                    // Save the token to browser storage
+                    localStorage.setItem('token', data.access_token);
+                    
+                    showMessage('Login successful! Redirecting...', 'success');
+                    
+                    // Redirect to dashboard after 1 second
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    // Show error message
+                    showMessage('Login failed: ' + data.detail, 'danger');
+                }
+            } catch (error) {
+                showMessage('Error connecting to server', 'danger');
+                console.error('Error:', error);
+            }
+        });
+        
+        // Helper function to show messages
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${text}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
